@@ -10,7 +10,7 @@ import (
 	"math/big"
 )
 
-const Difficulty = 12 //Add difficulty inspiring alg
+const Difficulty = 18 //Add difficulty inspiring alg
 
 type ProofOfWork struct {
 	Block  *Block
@@ -20,7 +20,9 @@ type ProofOfWork struct {
 func NewProof(b *Block) *ProofOfWork {
 	target := big.NewInt(1)
 	target.Lsh(target, uint(256-Difficulty))
+
 	pow := &ProofOfWork{b, target}
+
 	return pow
 }
 
@@ -34,18 +36,23 @@ func (pow *ProofOfWork) InitData(nonce int) []byte {
 		},
 		[]byte{},
 	)
+
 	return data
 }
 
 func (pow *ProofOfWork) Run() (int, []byte) {
 	var intHash big.Int
 	var hash [32]byte
+
 	nonce := 0
+
 	for nonce < math.MaxInt64 {
 		data := pow.InitData(nonce)
 		hash = sha256.Sum256(data)
+
 		fmt.Printf("\r%x", hash)
 		intHash.SetBytes(hash[:])
+
 		if intHash.Cmp(pow.Target) == -1 {
 			break
 		} else {
@@ -53,14 +60,18 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 		}
 	}
 	fmt.Println()
+
 	return nonce, hash[:]
 }
 
 func (pow *ProofOfWork) Validate() bool {
 	var intHash big.Int
+
 	data := pow.InitData(pow.Block.Nonce)
+
 	hash := sha256.Sum256(data)
 	intHash.SetBytes(hash[:])
+
 	return intHash.Cmp(pow.Target) == -1
 }
 
@@ -70,5 +81,6 @@ func ToHex(num int64) []byte {
 	if err != nil {
 		log.Panic(err)
 	}
+
 	return buff.Bytes()
 }
