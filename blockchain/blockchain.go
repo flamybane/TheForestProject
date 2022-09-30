@@ -2,7 +2,6 @@ package blockchain
 
 import (
 	"fmt"
-
 	"github.com/dgraph-io/badger"
 )
 
@@ -49,10 +48,10 @@ func InitBlockChain() *BlockChain {
 			return err
 		}
 	})
-
 	Handle(err)
 
 	blockchain := BlockChain{lastHash, db}
+
 	return &blockchain
 }
 

@@ -4,6 +4,7 @@ import (
 	"TheForestProject/blockchain"
 	"flag"
 	"fmt"
+	"github.com/dgraph-io/badger"
 	"os"
 	"runtime"
 	"strconv"
@@ -87,7 +88,13 @@ func (cli *CommandLine) run() {
 func main() {
 	defer os.Exit(0)
 	chain := blockchain.InitBlockChain()
-	defer chain.Database.Close()
+
+	defer func(Database *badger.DB) {
+		err := Database.Close()
+		if err != nil {
+
+		}
+	}(chain.Database)
 
 	cli := CommandLine{chain}
 	cli.run()
