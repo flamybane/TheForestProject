@@ -10,7 +10,7 @@ import (
 	"math/big"
 )
 
-const Difficulty = 18 //Add difficulty inspiring alg
+const Difficulty = 12 //Add difficulty inspiring alg
 
 type ProofOfWork struct {
 	Block  *Block
@@ -30,7 +30,7 @@ func (pow *ProofOfWork) InitData(nonce int) []byte {
 	data := bytes.Join(
 		[][]byte{
 			pow.Block.PrevHash,
-			pow.Block.Data,
+			pow.Block.HashTransactions(),
 			ToHex(int64(nonce)),
 			ToHex(int64(Difficulty)),
 		},
