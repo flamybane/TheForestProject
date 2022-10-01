@@ -4,6 +4,7 @@ import (
 	"TheForestProject/blockchain"
 	"flag"
 	"fmt"
+	"github.com/dgraph-io/badger"
 	"log"
 	"os"
 	"runtime"
@@ -29,14 +30,18 @@ func (cli *CommandLine) validateArgs() {
 
 func (cli *CommandLine) printChain() {
 	chain := blockchain.ContinueBlockChain("")
-	defer chain.Database.Close()
-	iter := cli.Iterator()
+	defer func(Database *badger.DB) {
+		err := Database.Close()
+		if err != nil {
+
+		}
+	}(chain.Database)
+	iter := chain.Iterator()
 
 	for {
 		block := iter.Next()
 
 		fmt.Printf("Previous hash: %x\n", block.PrevHash)
-		fmt.Printf("Data: %s\n", block.Data)
 		fmt.Printf("Hash: %x\n", block.Hash)
 		pow := blockchain.NewProof(block)
 		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
@@ -50,13 +55,21 @@ func (cli *CommandLine) printChain() {
 
 func (cli *CommandLine) createBlockChain(address string) {
 	chain := blockchain.InitBlockChain(address)
-	chain.Database.Close()
+	err := chain.Database.Close()
+	if err != nil {
+		return
+	}
 	fmt.Println("Finished!")
 }
 
 func (cli *CommandLine) getBalance(address string) {
 	chain := blockchain.ContinueBlockChain(address)
-	defer chain.Database.Close()
+	defer func(Database *badger.DB) {
+		err := Database.Close()
+		if err != nil {
+
+		}
+	}(chain.Database)
 
 	balance := 0
 	UTXOs := chain.FindUTXO(address)
@@ -70,7 +83,12 @@ func (cli *CommandLine) getBalance(address string) {
 
 func (cli *CommandLine) send(from, to string, amount int) {
 	chain := blockchain.ContinueBlockChain(from)
-	defer chain.Database.Close()
+	defer func(Database *badger.DB) {
+		err := Database.Close()
+		if err != nil {
+
+		}
+	}(chain.Database)
 
 	tx := blockchain.NewTransaction(from, to, amount, chain)
 	chain.AddBlock([]*blockchain.Transaction{tx})
@@ -86,7 +104,7 @@ func (cli *CommandLine) run() {
 	printChainCmd := flag.NewFlagSet("printchain", flag.ExitOnError)
 
 	getBalanceAddress := getBalanceCmd.String("address", "", "The address to get balance for")
-	createBlockchainAddress := createBlockchainCmd.String("address", "", "The address to genesis block reward to")
+	createBlockchainAddress := createBlockchainCmd.String("address", "", "The address to send genesis block reward to")
 	sendFrom := sendCmd.String("from", "", "Source wallet address")
 	sendTo := sendCmd.String("to", "", "Destination wallet address")
 	sendAmount := sendCmd.Int("amount", 0, "Amount to send")
@@ -134,7 +152,7 @@ func (cli *CommandLine) run() {
 	}
 
 	if printChainCmd.Parsed() {
-		cli.printUsage()
+		cli.printChain()
 	}
 
 	if sendCmd.Parsed() {

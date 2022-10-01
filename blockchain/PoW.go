@@ -10,7 +10,7 @@ import (
 	"math/big"
 )
 
-const Difficulty = 12 //Add difficulty inspiring alg
+const Difficulty = 18 //Add difficulty inspiring alg
 
 type ProofOfWork struct {
 	Block  *Block
