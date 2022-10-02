@@ -65,9 +65,9 @@ func PublicKeyHash(pubKey []byte) []byte {
 		log.Panic(err)
 	}
 
-	publickRipMD := hasher.Sum(nil)
+	publicRipMD := hasher.Sum(nil)
 
-	return publickRipMD
+	return publicRipMD
 }
 
 func Checksum(payload []byte) []byte {
