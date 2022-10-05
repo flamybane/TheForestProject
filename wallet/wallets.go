@@ -5,7 +5,6 @@ import (
 	"crypto/elliptic"
 	"encoding/gob"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 )
@@ -19,7 +18,6 @@ type Wallets struct {
 func CreateWallets() (*Wallets, error) {
 	wallets := Wallets{}
 	wallets.Wallets = make(map[string]*Wallet)
-
 	err := wallets.LoadFile()
 
 	return &wallets, err
@@ -55,7 +53,7 @@ func (ws *Wallets) LoadFile() error {
 
 	var wallets Wallets
 
-	fileContent, err := ioutil.ReadFile(walletFile)
+	fileContent, err := os.ReadFile(walletFile)
 	if err != nil {
 		return err
 	}
@@ -83,7 +81,7 @@ func (ws *Wallets) SaveFile() {
 		log.Panic(err)
 	}
 
-	err = ioutil.WriteFile(walletFile, content.Bytes(), 0644)
+	err = os.WriteFile(walletFile, content.Bytes(), 0644)
 	if err != nil {
 		log.Panic(err)
 	}

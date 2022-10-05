@@ -10,7 +10,7 @@ import (
 	"math/big"
 )
 
-const Difficulty = 18 //Add difficulty inspiring alg
+const Difficulty = 18 //Add difficulty inspiring alg and create PoS
 
 type ProofOfWork struct {
 	Block  *Block
