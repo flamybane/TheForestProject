@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	dbPath      = "./tmp/blocks"
-	dbFile      = "./tmp/blocks/MANIFEST"
+	dbPath      = "./blocks"
+	dbFile      = "./blocks/MANIFEST"
 	genesisData = "First Transaction from Genesis"
 )
 
@@ -231,6 +231,11 @@ func (bc *BlockChain) SignTransaction(tx *Transaction, privKey ecdsa.PrivateKey)
 }
 
 func (bc *BlockChain) VerifyTransaction(tx *Transaction) bool {
+
+	if tx.IsCoinbase() {
+		return true
+	}
+
 	prevTXs := make(map[string]Transaction)
 
 	for _, in := range tx.Inputs {
