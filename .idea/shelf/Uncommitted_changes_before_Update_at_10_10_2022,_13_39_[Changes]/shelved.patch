@@ -1,0 +1,163 @@
+Index: .idea/shelf/Uncommitted_changes_before_Update_at_01_10_2022__11_44__Changes_.xml
+===================================================================
+diff --git a/.idea/shelf/Uncommitted_changes_before_Update_at_01_10_2022__11_44__Changes_.xml b/.idea/shelf/Uncommitted_changes_before_Update_at_01_10_2022__11_44__Changes_.xml
+deleted file mode 100644
+--- a/.idea/shelf/Uncommitted_changes_before_Update_at_01_10_2022__11_44__Changes_.xml	(revision 5aa16d51d5698ac84654b87e4cb0ee2e4e854d0e)
++++ /dev/null	(revision 5aa16d51d5698ac84654b87e4cb0ee2e4e854d0e)
+@@ -1,4 +0,0 @@
+-<changelist name="Uncommitted_changes_before_Update_at_01_10_2022,_11_44_[Changes]" date="1664613903416" recycled="true" deleted="true">
+-  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_01_10_2022,_11_44_[Changes]/shelved.patch" />
+-  <option name="DESCRIPTION" value="Uncommitted changes before Update at 01.10.2022, 11:44 [Changes]" />
+-</changelist>
+\ No newline at end of file
+Index: .idea/shelf/Uncommitted_changes_before_Update_at_01_10_2022,_11_44_[Changes]/shelved.patch
+===================================================================
+diff --git a/.idea/shelf/Uncommitted_changes_before_Update_at_01_10_2022,_11_44_[Changes]/shelved.patch b/.idea/shelf/Uncommitted_changes_before_Update_at_01_10_2022,_11_44_[Changes]/shelved.patch
+deleted file mode 100644
+--- a/.idea/shelf/Uncommitted_changes_before_Update_at_01_10_2022,_11_44_[Changes]/shelved.patch	(revision 5aa16d51d5698ac84654b87e4cb0ee2e4e854d0e)
++++ /dev/null	(revision 5aa16d51d5698ac84654b87e4cb0ee2e4e854d0e)
+@@ -1,98 +0,0 @@
+-Index: main.go
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+>package main\n\nimport (\n\t\"TheForestProject/blockchain\"\n\t\"flag\"\n\t\"fmt\"\n\t\"github.com/dgraph-io/badger\"\n\t\"os\"\n\t\"runtime\"\n\t\"strconv\"\n)\n\ntype CommandLine struct {\n\tblockchain *blockchain.BlockChain\n}\n\nfunc (cli *CommandLine) printUsage() {\n\tfmt.Println(\"Usage:\")\n\tfmt.Println(\" add -block BLOCK_DATA - add a block to the chain\")\n\tfmt.Println(\" print - Prints the blocks in the chain\")\n}\n\nfunc (cli *CommandLine) validateArgs() {\n\tif len(os.Args) < 2 {\n\t\tcli.printUsage()\n\t\truntime.Goexit()\n\t}\n}\n\nfunc (cli *CommandLine) addBlock(data string) {\n\tcli.blockchain.AddBlock(data)\n\tfmt.Println(\"Added Block!\")\n}\n\nfunc (cli *CommandLine) printChain() {\n\titer := cli.blockchain.Iterator()\n\n\tfor {\n\t\tblock := iter.Next()\n\n\t\tfmt.Printf(\"Previous hash: %x\\n\", block.PrevHash)\n\t\tfmt.Printf(\"Data: %s\\n\", block.Data)\n\t\tfmt.Printf(\"Hash: %x\\n\", block.Hash)\n\t\tpow := blockchain.NewProof(block)\n\t\tfmt.Printf(\"PoW: %s\\n\", strconv.FormatBool(pow.Validate()))\n\t\tfmt.Println()\n\n\t\tif len(block.PrevHash) == 0 {\n\t\t\tbreak\n\t\t}\n\t}\n}\n\nfunc (cli *CommandLine) run() {\n\tcli.validateArgs()\n\n\taddBlockCmd := flag.NewFlagSet(\"add\", flag.ExitOnError)\n\tprintChainCmd := flag.NewFlagSet(\"print\", flag.ExitOnError)\n\taddBlockData := addBlockCmd.String(\"block\", \"\", \"Block data\")\n\n\tswitch os.Args[1] {\n\tcase \"add\":\n\t\terr := addBlockCmd.Parse(os.Args[2:])\n\t\tblockchain.Handle(err)\n\n\tcase \"print\":\n\t\terr := printChainCmd.Parse(os.Args[2:])\n\t\tblockchain.Handle(err)\n\n\tdefault:\n\t\tcli.printUsage()\n\t\truntime.Goexit()\n\t}\n\n\tif addBlockCmd.Parsed() {\n\t\tif *addBlockData == \"\" {\n\t\t\taddBlockCmd.Usage()\n\t\t\truntime.Goexit()\n\t\t}\n\t\tcli.addBlock(*addBlockData)\n\t}\n\n\tif printChainCmd.Parsed() {\n\t\tcli.printChain()\n\t}\n}\n\nfunc main() {\n\tdefer os.Exit(0)\n\tchain := blockchain.InitBlockChain()\n\n\tdefer func(Database *badger.DB) {\n\t\terr := Database.Close()\n\t\tif err != nil {\n\n\t\t}\n\t}(chain.Database)\n\n\tcli := CommandLine{chain}\n\tcli.run()\n}\n
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/main.go b/main.go
+---- a/main.go	(revision 197cf79b86212fa6c47d2f9899f42529768f679a)
+-+++ b/main.go	(date 1664559501740)
+-@@ -91,9 +91,7 @@
+- 
+- 	defer func(Database *badger.DB) {
+- 		err := Database.Close()
+--		if err != nil {
+--
+--		}
+-+		blockchain.Handle(err)
+- 	}(chain.Database)
+- 
+- 	cli := CommandLine{chain}
+-Index: .idea/workspace.xml
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"ALL\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"dbe544e3-e51d-40a7-bdf5-74ce45fd3b78\" name=\"Changes\" comment=\"\">\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/blockchain/blockchain.go\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/blockchain/blockchain.go\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/go.mod\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/go.mod\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/go.sum\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/go.sum\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"GOROOT\" url=\"file:///opt/homebrew/Cellar/go/1.19.1/libexec\" />\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"MarkdownSettingsMigration\">\n    <option name=\"stateVersion\" value=\"1\" />\n  </component>\n  <component name=\"ProjectId\" id=\"2FShu4pbXTfyF3gLmumznJMMeM2\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\"><![CDATA[{\n  \"keyToString\": {\n    \"RunOnceActivity.OpenProjectViewOnStart\": \"true\",\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\n    \"RunOnceActivity.go.format.on.save.advertiser.fired\": \"true\",\n    \"RunOnceActivity.go.formatter.settings.were.checked\": \"true\",\n    \"RunOnceActivity.go.migrated.go.modules.settings\": \"true\",\n    \"RunOnceActivity.go.modules.go.list.on.any.changes.was.set\": \"true\",\n    \"RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed\": \"true\",\n    \"WebServerToolWindowFactoryState\": \"false\",\n    \"configurable..is.expanded\": \"false\",\n    \"configurable.GoLibrariesConfigurable.is.expanded\": \"true\",\n    \"go.import.settings.migrated\": \"true\",\n    \"go.sdk.automatically.set\": \"true\",\n    \"last_opened_file_path\": \"/Users/riddledwithknife\",\n    \"settings.editor.selected.configurable\": \"com.goide.configuration.GoLibrariesConfigurableProvider\"\n  }\n}]]></component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VgoProject\">\n    <settings-migrated>true</settings-migrated>\n  </component>\n</project>
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+---- a/.idea/workspace.xml	(revision 197cf79b86212fa6c47d2f9899f42529768f679a)
+-+++ b/.idea/workspace.xml	(date 1664559513752)
+-@@ -4,11 +4,9 @@
+-     <option name="autoReloadType" value="ALL" />
+-   </component>
+-   <component name="ChangeListManager">
+--    <list default="true" id="dbe544e3-e51d-40a7-bdf5-74ce45fd3b78" name="Changes" comment="">
+-+    <list default="true" id="dbe544e3-e51d-40a7-bdf5-74ce45fd3b78" name="Changes" comment="main handle">
+-       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+--      <change beforePath="$PROJECT_DIR$/blockchain/blockchain.go" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain/blockchain.go" afterDir="false" />
+--      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+--      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+-+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+-     </list>
+-     <option name="SHOW_DIALOG" value="false" />
+-     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+-@@ -27,24 +25,24 @@
+-     <option name="hideEmptyMiddlePackages" value="true" />
+-     <option name="showLibraryContents" value="true" />
+-   </component>
+--  <component name="PropertiesComponent"><![CDATA[{
+--  "keyToString": {
+--    "RunOnceActivity.OpenProjectViewOnStart": "true",
+--    "RunOnceActivity.ShowReadmeOnStart": "true",
+--    "RunOnceActivity.go.format.on.save.advertiser.fired": "true",
+--    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+--    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+--    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+--    "RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed": "true",
+--    "WebServerToolWindowFactoryState": "false",
+--    "configurable..is.expanded": "false",
+--    "configurable.GoLibrariesConfigurable.is.expanded": "true",
+--    "go.import.settings.migrated": "true",
+--    "go.sdk.automatically.set": "true",
+--    "last_opened_file_path": "/Users/riddledwithknife",
+--    "settings.editor.selected.configurable": "com.goide.configuration.GoLibrariesConfigurableProvider"
+-+  <component name="PropertiesComponent">{
+-+  &quot;keyToString&quot;: {
+-+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+-+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-+    &quot;RunOnceActivity.go.format.on.save.advertiser.fired&quot;: &quot;true&quot;,
+-+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+-+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+-+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+-+    &quot;RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed&quot;: &quot;true&quot;,
+-+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+-+    &quot;configurable..is.expanded&quot;: &quot;false&quot;,
+-+    &quot;configurable.GoLibrariesConfigurable.is.expanded&quot;: &quot;true&quot;,
+-+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+-+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+-+    &quot;last_opened_file_path&quot;: &quot;/Users/riddledwithknife&quot;,
+-+    &quot;settings.editor.selected.configurable&quot;: &quot;com.goide.configuration.GoLibrariesConfigurableProvider&quot;
+-   }
+--}]]></component>
+-+}</component>
+-   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+-   <component name="TypeScriptGeneratedFilesManager">
+-     <option name="version" value="3" />
+-@@ -59,6 +57,10 @@
+-         </entry>
+-       </map>
+-     </option>
+-+  </component>
+-+  <component name="VcsManagerConfiguration">
+-+    <MESSAGE value="main handle" />
+-+    <option name="LAST_COMMIT_MESSAGE" value="main handle" />
+-   </component>
+-   <component name="VgoProject">
+-     <settings-migrated>true</settings-migrated>
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"ALL\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"dbe544e3-e51d-40a7-bdf5-74ce45fd3b78\" name=\"Changes\" comment=\"Finished wallet, fix error in SaveFile\">\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_30_09_2022_19_17_[Changes]/shelved.patch\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_30_09_2022_19_17__Changes_.xml\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/go.mod\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/go.mod\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/go.sum\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/go.sum\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/wallet/wallets.go\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/wallet/wallets.go\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"Go File\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"GOROOT\" url=\"file:///opt/homebrew/Cellar/go@1.18/1.18.7/libexec\" />\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n    <option name=\"RESET_MODE\" value=\"HARD\" />\n  </component>\n  <component name=\"GoLibraries\">\n    <option name=\"urls\">\n      <list>\n        <option value=\"file://$USER_HOME$/go\" />\n      </list>\n    </option>\n    <option name=\"useGoPathFromSystemEnvironment\" value=\"false\" />\n  </component>\n  <component name=\"MarkdownSettingsMigration\">\n    <option name=\"stateVersion\" value=\"1\" />\n  </component>\n  <component name=\"ProjectId\" id=\"2FShu4pbXTfyF3gLmumznJMMeM2\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\">{\n  &quot;keyToString&quot;: {\n    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.go.format.on.save.advertiser.fired&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed&quot;: &quot;true&quot;,\n    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,\n    &quot;configurable..is.expanded&quot;: &quot;true&quot;,\n    &quot;configurable.GoLibrariesConfigurable.is.expanded&quot;: &quot;true&quot;,\n    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,\n    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,\n    &quot;last_opened_file_path&quot;: &quot;/Users/riddledwithknife&quot;,\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\n    &quot;settings.editor.selected.configurable&quot;: &quot;go.sdk&quot;\n  }\n}</component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State>\n              <option name=\"FILTERS\">\n                <map>\n                  <entry key=\"branch\">\n                    <value>\n                      <list>\n                        <option value=\"origin/develop\" />\n                      </list>\n                    </value>\n                  </entry>\n                </map>\n              </option>\n            </State>\n          </value>\n        </entry>\n      </map>\n    </option>\n    <option name=\"RECENT_FILTERS\">\n      <map>\n        <entry key=\"Branch\">\n          <value>\n            <list>\n              <RecentGroup>\n                <option name=\"FILTER_VALUES\">\n                  <option value=\"origin/develop\" />\n                </option>\n              </RecentGroup>\n            </list>\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"adding basic wallet method\" />\n    <MESSAGE value=\"fix\" />\n    <MESSAGE value=\"delete Man\" />\n    <MESSAGE value=\"Finished wallet, fix error in SaveFile\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Finished wallet, fix error in SaveFile\" />\n  </component>\n  <component name=\"VgoProject\">\n    <settings-migrated>true</settings-migrated>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 5aa16d51d5698ac84654b87e4cb0ee2e4e854d0e)
++++ b/.idea/workspace.xml	(date 1665398356565)
+@@ -4,13 +4,10 @@
+     <option name="autoReloadType" value="ALL" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="dbe544e3-e51d-40a7-bdf5-74ce45fd3b78" name="Changes" comment="Finished wallet, fix error in SaveFile">
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_30_09_2022_19_17_[Changes]/shelved.patch" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_30_09_2022_19_17__Changes_.xml" beforeDir="false" />
++    <list default="true" id="dbe544e3-e51d-40a7-bdf5-74ce45fd3b78" name="Changes" comment="Go version change">
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_01_10_2022,_11_44_[Changes]/shelved.patch" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_01_10_2022__11_44__Changes_.xml" beforeDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/wallet/wallets.go" beforeDir="false" afterPath="$PROJECT_DIR$/wallet/wallets.go" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -83,7 +80,7 @@
+                   <entry key="branch">
+                     <value>
+                       <list>
+-                        <option value="origin/develop" />
++                        <option value="develop" />
+                       </list>
+                     </value>
+                   </entry>
+@@ -115,7 +112,8 @@
+     <MESSAGE value="fix" />
+     <MESSAGE value="delete Man" />
+     <MESSAGE value="Finished wallet, fix error in SaveFile" />
+-    <option name="LAST_COMMIT_MESSAGE" value="Finished wallet, fix error in SaveFile" />
++    <MESSAGE value="Go version change" />
++    <option name="LAST_COMMIT_MESSAGE" value="Go version change" />
+   </component>
+   <component name="VgoProject">
+     <settings-migrated>true</settings-migrated>
