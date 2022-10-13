@@ -47,11 +47,9 @@ func NewTXOutput(value int, address string) *TxOutput {
 
 func (outs TxOutputs) Serialize() []byte {
 	var buffer bytes.Buffer
-
 	encode := gob.NewEncoder(&buffer)
 	err := encode.Encode(outs)
 	Handle(err)
-
 	return buffer.Bytes()
 }
 
